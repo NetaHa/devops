@@ -10,7 +10,7 @@ client = TestClient(app)
 def test_db():
     db = get_db_connection()
     cursor = db.cursor()
-    cursor.execute("DELETE FROM events")  # Clear the table before each test
+    cursor.execute("DELETE FROM events")
     db.commit()
     yield db
     db.close()
@@ -30,15 +30,13 @@ def test_process_event(test_db):
 
 
 def test_get_reports(test_db):
-    # Insert a test event directly into the DB
     cursor = test_db.cursor()
-    eventtimestamputc = datetime.now(timezone.utc) - timedelta(seconds=100)  # 100 seconds ago
+    eventtimestamputc = datetime.now(timezone.utc) - timedelta(seconds=100)
     cursor.execute('''
     INSERT INTO events (eventtimestamputc, userid, eventname) VALUES (?, ?, ?)
     ''', (eventtimestamputc, 'user123', 'Test Event'))
     test_db.commit()
 
-    # Test the /get_reports/ endpoint
     response = client.post("/get_reports/", params={"lastseconds": 200, "userid": "user123"})
     assert response.status_code == 200
     response_json = response.json()
@@ -47,8 +45,7 @@ def test_get_reports(test_db):
     assert response_json["events"][0]["userid"] == "user123"
     assert response_json["events"][0]["eventname"] == "Test Event"
 
-    # Check if an event outside the time range is not returned
     response = client.post("/get_reports/", params={"lastseconds": 50, "userid": "user123"})
     assert response.status_code == 200
     response_json = response.json()
-    assert len(response_json["events"]) == 0  # No events should be returned
+    assert len(response_json["events"]) == 0

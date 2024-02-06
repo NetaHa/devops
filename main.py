@@ -1,8 +1,13 @@
 from fastapi import FastAPI, Depends
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 import sqlite3
-from datetime import timezone, datetime, timedelta
 import uvicorn
+from datetime import timezone, datetime, timedelta
+
+
+from ex3_3.ex3 import ml_analysis
+
 
 class Event(BaseModel):
     userid: str
@@ -50,6 +55,12 @@ async def get_reports(lastseconds: int, userid: str, db=Depends(get_db_connectio
     events_list = [{'eventtimestamputc': event[0], 'userid': event[1], 'eventname': event[2]} for event in events]
     return {"events": events_list}
 
+
+@app.get('/analyze_events')
+async def analyze_events():
+    chart_path = ml_analysis.perform_analysis_and_generate_chart()
+
+    return FileResponse(chart_path, media_type='image/png')
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
