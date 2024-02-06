@@ -6,7 +6,7 @@ import uvicorn
 from datetime import timezone, datetime, timedelta
 
 
-from ex3_3.ex3 import ml_analysis
+from ex3 import ml_analysis
 
 
 class Event(BaseModel):
