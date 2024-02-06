@@ -1,5 +1,5 @@
 from fastapi.testclient import TestClient
-from ex3_3.ex3.main import app, get_db_connection
+from main import app, get_db_connection
 from datetime import datetime, timezone, timedelta
 import pytest
 
