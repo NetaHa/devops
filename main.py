@@ -4,9 +4,7 @@ from pydantic import BaseModel
 import sqlite3
 import uvicorn
 from datetime import timezone, datetime, timedelta
-
-
-from ex3 import ml_analysis
+from ml_analysis import perform_analysis_and_generate_chart
 
 
 class Event(BaseModel):
